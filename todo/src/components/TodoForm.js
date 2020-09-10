@@ -1,27 +1,62 @@
-import React from "react";
+import React, { useState, useReducer, useEffect } from "react";
+import { initialState, reducer } from "../reducer/reducer";
 
-export default function TodoForm(props) {
-  const { onSubmit, onChange, task, dispatch, todos } = props;
+function TodoForm() {
+  const [todo, setToDo] = useState("");
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const handleInput = (e) => {
+    setToDo(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    dispatch({ type: "ADD_TODO", payload: todo });
+    setToDo("");
+  };
+
   return (
-    <div className="todo-form">
-      <div>
-        {todos.map((todo, id) => (
-          <h3
-            style={{ textDecoration: todo.completed ? "line-through" : null }}
-            key={todo.id}
-            onClick={() => dispatch({ type: "TOGGLE_TODO", id })}
-          >
-            {todo.item}
-          </h3>
-        ))}
+    <div className="todoform">
+      <div className="wrapper">
+        <div className="form-input">
+          <input
+            name="name"
+            type="text"
+            value={todo}
+            onChange={handleInput}
+          ></input>
+          <div>
+            <button className="add" onClick={handleSubmit}>
+              Add to List
+            </button> &nbsp;
+            <button
+              className="clear"
+              onClick={() => {
+                dispatch({ type: "CLEAR_COMPLETED" });
+              }}
+            >
+              Clear Completed Task
+            </button>
+          </div>
+        </div>
+
+        <div className="tasks">
+          {state.map((task) => {
+            return (
+              <div
+                className="task"
+                style={task.done ? { textDecoration: "line-through" } : null}
+                onClick={() => {
+                  dispatch({ type: "TOGGLE_DONE", id: task.id });
+                }}
+              >
+                {task.name}
+              </div>
+            );
+          })}
+        </div>
       </div>
-      <form onSubmit={onSubmit}>
-        <input type="text" value={task} onChange={onChange} />
-        <button>Add Todo</button> &nbsp;
-        <button onClick={() => dispatch({ type: "CLEAR_COMPLETED", todos })}>
-          Clear Todo
-        </button>
-      </form>
     </div>
   );
 }
+
+export default TodoForm;

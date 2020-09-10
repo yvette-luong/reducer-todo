@@ -1,29 +1,42 @@
-export const initialState = {
-  todos: [
-    {
-      item: "Learn about reducers",
-      completed: false,
-      id: 3892987589,
-    },
-  ],
-};
+export const initialState = [
+  {
+    name: "Learning Reducer",
+    id: 3892987589,
+    done: false
+  },
+
+
+]
 
 export const reducer = (state, action) => {
-  console.log(state, action);
-  switch (action.type) {
+  switch (action.type){
     case "ADD_TODO":
-        return {
-            todos:[...state.todos,{item:action.task, completed: false, id:new Date()}]
-          };
-    case "TOGGLE_DONE":
-      return  {
-        todos:state.todos.map((todo,id)=> id === action.id ?{...todo,completed:!todo.completed} : todo)
-      };
-    case "CLEAR_COMPLETED":
-        return{
-        todos:state.todos.filter((todo)=> todo.id !== action.id)
-      };
+      return [
+        ...state,
+        {
+          name: action.payload,
+          id: Date.now(),
+          done: false
+        }
+      ]
+    case 'TOGGLE_DONE':
+      return state.map((item)=>{
+        if(item.id === action.id){
+          return {
+            ...item,
+            done: !item.done
+          }
+        }
+        else
+        return item
+        
+      })
+    case 'CLEAR_COMPLETED':
+      return state.filter((item)=> {
+        if(item.done === false)
+        return item
+      })
     default:
-      return state;
+      return state
   }
-};
+}
